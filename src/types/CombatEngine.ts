@@ -11,3 +11,18 @@ export type CombatEngineState = {
   monsters: Monster[];
   players: Player[];
 };
+
+export type DispatchableEvent = {
+  type: "combat.damage_dealt";
+  payload: {
+    attackerId: string;
+    attackeeId: string;
+    damage: number;
+  };
+};
+
+export type ScheduledEvent = {
+  startedAt: number;
+  runAt: number;
+  run: () => DispatchableEvent[];
+};
