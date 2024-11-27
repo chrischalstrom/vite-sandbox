@@ -41,12 +41,11 @@ export const CombatEngineProvider = ({
   children: React.ReactNode;
 }) => {
   const { subscribe, notify } = useEventBridge<CombatEngineState>();
-  const { getState, update } = useCombatEngine(notify);
+  const { getState, begin } = useCombatEngine(notify);
 
   useEffect(() => {
     console.log("ticking game engine state...");
-    update();
-    update();
+    begin();
   }, []);
 
   const value = useMemo(() => ({ getState, subscribe }), [getState, subscribe]);
