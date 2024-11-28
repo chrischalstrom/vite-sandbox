@@ -8,9 +8,9 @@ import { CombatCard } from "src/components/CombatCard";
 import { HealthBar } from "src/components/HealthBar";
 
 export const CombatMonsterCard = ({ entityId }: { entityId: string }) => {
-  const name = useCombatEngineState(selectEntityName(entityId, "monsters"));
+  const name = useCombatEngineState(selectEntityName({ entityId }));
   const { current, max } = useCombatEngineState(
-    selectEntityHealth(entityId, "monsters"),
+    selectEntityHealth({ entityId }),
   );
 
   return (

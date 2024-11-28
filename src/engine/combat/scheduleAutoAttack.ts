@@ -1,4 +1,13 @@
-import type { CombatEngineState, ScheduledEvent } from "src/types/CombatEngine";
+import { damageDealt } from "./actions";
+import type {
+  CombatEntity,
+  CombatEngineState,
+  ScheduledEvent,
+} from "src/types/CombatEngine";
+
+const canAct = (entity?: CombatEntity) => {
+  return entity && entity.hp.current > 0;
+};
 
 export const scheduleAutoAttack = (
   attackerId: string,
@@ -11,13 +20,19 @@ export const scheduleAutoAttack = (
 
   const run: ScheduledEvent["run"] = () => {
     const state = combatEngineState.current;
-    const player = state.players.find(({ id }) => attackerId === id);
-    if (!player) {
-      console.error("player not found", attackerId, state.players);
+    const attacker = state.entities[attackerId];
+    if (!canAct(attacker)) {
+      console.log("attacker cannot act", attackerId, state.entities);
       return [];
     }
-    console.log(`${player.name}'s turn to swing`);
-    const target = state.monsters.find(({ hp: { current } }) => current > 0);
+    console.log(
+      `${attacker.name}'s turn to swing (hp: ${attacker.hp.current})`,
+    );
+
+    // TODO better targeting
+    const target = Object.values(state.entities).find(
+      ({ type, hp: { current } }) => type !== attacker.type && current > 0,
+    );
 
     // TODO: better to change state elsewhere in a more centralized way.
     // i.e. by reading return array.
@@ -30,16 +45,7 @@ export const scheduleAutoAttack = (
       target.hp = { current: Math.max(0, current - damage), max };
 
       scheduleAutoAttack(attackerId, combatEngineState, runAt, pendingEvents);
-      return [
-        {
-          type: "combat.damage_dealt",
-          payload: {
-            attackerId,
-            attackeeId,
-            damage,
-          },
-        },
-      ];
+      return [damageDealt({ attackeeId, attackerId, damage })];
     }
 
     return [];

@@ -23,8 +23,7 @@ export const CombatEngineContext = createContext<{
     );
 
     return {
-      monsters: [],
-      players: [],
+      entities: {},
     };
   },
   subscribe: () => {

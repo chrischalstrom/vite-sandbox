@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import { damageDealt } from "./actions";
 import { processEvents } from "./processEvents";
 import type { DispatchableEvent, ScheduledEvent } from "src/types/CombatEngine";
 
@@ -45,42 +46,30 @@ describe("engine.combat.processEvents", () => {
     vi.setSystemTime(1000);
     const eventData: DispatchableEvent[][] = [
       [
-        {
-          type: "combat.damage_dealt",
-          payload: {
-            attackeeId: "event[0].attackee",
-            attackerId: "event[0].attacker",
-            damage: 1,
-          },
-        },
+        damageDealt({
+          attackeeId: "event[0].attackee",
+          attackerId: "event[0].attacker",
+          damage: 1,
+        }),
       ],
       [
-        {
-          type: "combat.damage_dealt",
-          payload: {
-            attackeeId: "event[1].attackee",
-            attackerId: "event[1].attacker",
-            damage: 2,
-          },
-        },
-        {
-          type: "combat.damage_dealt",
-          payload: {
-            attackeeId: "event[2].attackee",
-            attackerId: "event[2].attacker",
-            damage: 3,
-          },
-        },
+        damageDealt({
+          attackeeId: "event[1].attackee",
+          attackerId: "event[1].attacker",
+          damage: 2,
+        }),
+        damageDealt({
+          attackeeId: "event[2].attackee",
+          attackerId: "event[2].attacker",
+          damage: 3,
+        }),
       ],
       [
-        {
-          type: "combat.damage_dealt",
-          payload: {
-            attackeeId: "event[3].attackee",
-            attackerId: "event[3].attacker",
-            damage: 4,
-          },
-        },
+        damageDealt({
+          attackeeId: "event[3].attackee",
+          attackerId: "event[3].attacker",
+          damage: 4,
+        }),
       ],
     ];
     const events: Array<ScheduledEvent> = [
@@ -104,30 +93,21 @@ describe("engine.combat.processEvents", () => {
     const pendingEvents = { current: [...events] };
     const results = processEvents(pendingEvents);
     expect(results).toEqual([
-      {
-        type: "combat.damage_dealt",
-        payload: {
-          attackeeId: "event[3].attackee",
-          attackerId: "event[3].attacker",
-          damage: 4,
-        },
-      },
-      {
-        type: "combat.damage_dealt",
-        payload: {
-          attackeeId: "event[1].attackee",
-          attackerId: "event[1].attacker",
-          damage: 2,
-        },
-      },
-      {
-        type: "combat.damage_dealt",
-        payload: {
-          attackeeId: "event[2].attackee",
-          attackerId: "event[2].attacker",
-          damage: 3,
-        },
-      },
+      damageDealt({
+        attackeeId: "event[3].attackee",
+        attackerId: "event[3].attacker",
+        damage: 4,
+      }),
+      damageDealt({
+        attackeeId: "event[1].attackee",
+        attackerId: "event[1].attacker",
+        damage: 2,
+      }),
+      damageDealt({
+        attackeeId: "event[2].attackee",
+        attackerId: "event[2].attacker",
+        damage: 3,
+      }),
     ]);
     expect(pendingEvents.current.length).toBe(1);
     expect(events[0].run).not.toHaveBeenCalled();

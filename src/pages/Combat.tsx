@@ -7,7 +7,13 @@ import { useCombatEngineState } from "src/hooks/useCombatEngineState";
 import { selectCombatEngineState } from "src/selectors/selectCombatEntity";
 
 const CombatInner = () => {
-  const { monsters, players } = useCombatEngineState(selectCombatEngineState);
+  const { entities } = useCombatEngineState(selectCombatEngineState);
+  const monsters = Object.values(entities).filter(
+    ({ type }) => type === "monster",
+  );
+  const players = Object.values(entities).filter(
+    ({ type }) => type === "player",
+  );
 
   return (
     <div className="flex flex-col justify-between w-full h-full">
