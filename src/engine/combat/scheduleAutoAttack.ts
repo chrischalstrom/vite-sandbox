@@ -22,7 +22,7 @@ export const scheduleAutoAttack = (
     const state = combatEngineState.current;
     const attacker = state.entities[attackerId];
     if (!canAct(attacker)) {
-      console.log("attacker cannot act", attackerId, state.entities);
+      console.log(`attacker: ${attackerId} cannot act`, state.entities);
       return [];
     }
     console.log(
@@ -34,15 +34,9 @@ export const scheduleAutoAttack = (
       ({ type, hp: { current } }) => type !== attacker.type && current > 0,
     );
 
-    // TODO: better to change state elsewhere in a more centralized way.
-    // i.e. by reading return array.
     if (target) {
-      const {
-        id: attackeeId,
-        hp: { current, max },
-      } = target;
+      const { id: attackeeId } = target;
       const damage = 3;
-      target.hp = { current: Math.max(0, current - damage), max };
 
       scheduleAutoAttack(attackerId, combatEngineState, runAt, pendingEvents);
       return [damageDealt({ attackeeId, attackerId, damage })];

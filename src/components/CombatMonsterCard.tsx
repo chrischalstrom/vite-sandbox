@@ -13,8 +13,12 @@ export const CombatMonsterCard = ({ entityId }: { entityId: string }) => {
     selectEntityHealth({ entityId }),
   );
 
+  if (!name) {
+    return null;
+  }
+
   return (
-    <div className="flex-1">
+    <div className="flex-1" data-testid="combat-monster-card">
       <CombatCard>{name}</CombatCard>
       <HealthBar current={current} max={max} />
     </div>

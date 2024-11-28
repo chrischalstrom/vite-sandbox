@@ -1,8 +1,12 @@
-import type { ScheduledEvent } from "src/types/CombatEngine";
+import { mutate } from "./mutations";
+import type { CombatEngineState, ScheduledEvent } from "src/types/CombatEngine";
 
-export const processEvents = (pendingEvents: {
-  current: Array<ScheduledEvent>;
-}) => {
+export const processEvents = (
+  combatEngineState: { current: CombatEngineState },
+  pendingEvents: {
+    current: Array<ScheduledEvent>;
+  },
+) => {
   const now = Date.now();
   const events = pendingEvents.current
     .filter(({ runAt }) => runAt <= now)
@@ -15,7 +19,11 @@ export const processEvents = (pendingEvents: {
       (pending) => pending !== event,
     );
     const { run } = event;
-    results.push(...run());
+    const runResults = run();
+
+    mutate(combatEngineState, runResults);
+
+    results.push(...runResults);
   }
 
   return results;

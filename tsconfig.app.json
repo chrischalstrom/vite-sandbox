@@ -10,6 +10,9 @@
     "paths": {
       "src/*": ["./src/*"]
     },
+    "types": [
+      "@vitest/browser/providers/playwright"
+    ],
 
     /* Bundler mode */
     "moduleResolution": "Bundler",

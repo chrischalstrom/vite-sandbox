@@ -43,7 +43,6 @@ export const CombatEngineProvider = ({
   const { getState, begin } = useCombatEngine(notify);
 
   useEffect(() => {
-    console.log("ticking game engine state...");
     begin();
   }, []);
 

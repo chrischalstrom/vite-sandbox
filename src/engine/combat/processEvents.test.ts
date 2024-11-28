@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import { getInitialState } from ".";
 import { damageDealt } from "./actions";
 import { processEvents } from "./processEvents";
 import type { DispatchableEvent, ScheduledEvent } from "src/types/CombatEngine";
@@ -14,8 +15,9 @@ describe("engine.combat.processEvents", () => {
   });
 
   it("returns an empty array if events are empty", () => {
+    const state = { current: getInitialState() };
     const pendingEvents = { current: [] };
-    const results = processEvents(pendingEvents);
+    const results = processEvents(state, pendingEvents);
     expect(results).toEqual([]);
   });
 
@@ -34,8 +36,9 @@ describe("engine.combat.processEvents", () => {
       },
     ];
 
+    const state = { current: getInitialState() };
     const pendingEvents = { current: [...events] };
-    const results = processEvents(pendingEvents);
+    const results = processEvents(state, pendingEvents);
     expect(results).toEqual([]);
     expect(pendingEvents.current.length).toBe(2);
     expect(events[0].run).not.toHaveBeenCalled();
@@ -90,8 +93,9 @@ describe("engine.combat.processEvents", () => {
       },
     ];
 
+    const state = { current: getInitialState() };
     const pendingEvents = { current: [...events] };
-    const results = processEvents(pendingEvents);
+    const results = processEvents(state, pendingEvents);
     expect(results).toEqual([
       damageDealt({
         attackeeId: "event[3].attackee",

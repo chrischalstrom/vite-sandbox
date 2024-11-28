@@ -19,6 +19,6 @@ export const selectEntityHealth =
 export const selectEntityName =
   ({ entityId }: { entityId: string }) =>
   (state: CombatEngineState) =>
-    selectCombatEntity({ entityId, state })?.name || "not_found";
+    selectCombatEntity({ entityId, state })?.name || "";
 
 export const selectCombatEngineState = (state: CombatEngineState) => state;

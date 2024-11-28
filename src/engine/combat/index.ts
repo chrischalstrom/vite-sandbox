@@ -4,53 +4,50 @@ import { scheduleAutoAttack } from "./scheduleAutoAttack";
 
 import type { CombatEngineState, ScheduledEvent } from "src/types/CombatEngine";
 
-// it might make more sense to normalize this data i.e.
-// entities: { [entityId]: {type: 'monster', ...}}
-// much cleaner lookups // fns etc.
-const useInitialState = (): CombatEngineState =>
-  useMemo(
-    () => ({
-      entities: {
-        jimmy: {
-          id: "jimmy",
-          name: "jimmy",
-          hp: { current: 81, max: 81 },
-          type: "player",
-        },
-        jed: {
-          id: "jed",
-          name: "jed",
-          hp: { current: 85, max: 85 },
-          type: "player",
-        },
-        zed: {
-          id: "zed",
-          name: "zed",
-          hp: { current: 91, max: 91 },
-          type: "player",
-        },
-        tedderonious: {
-          id: "tedderonious",
-          name: "tedderonious",
-          hp: { current: 83, max: 83 },
-          type: "player",
-        },
-        "goblin 1": {
-          id: "goblin 1",
-          name: "goblin 1",
-          hp: { current: 34, max: 34 },
-          type: "monster",
-        },
-        "goblin 2": {
-          id: "goblin 2",
-          name: "goblin 2",
-          hp: { current: 31, max: 31 },
-          type: "monster",
-        },
+export const getInitialState = () =>
+  ({
+    entities: {
+      jimmy: {
+        id: "jimmy",
+        name: "jimmy",
+        hp: { current: 81, max: 81 },
+        type: "player",
       },
-    }),
-    [],
-  );
+      jed: {
+        id: "jed",
+        name: "jed",
+        hp: { current: 85, max: 85 },
+        type: "player",
+      },
+      zed: {
+        id: "zed",
+        name: "zed",
+        hp: { current: 91, max: 91 },
+        type: "player",
+      },
+      tedderonious: {
+        id: "tedderonious",
+        name: "tedderonious",
+        hp: { current: 83, max: 83 },
+        type: "player",
+      },
+      "goblin 1": {
+        id: "goblin 1",
+        name: "goblin 1",
+        hp: { current: 34, max: 34 },
+        type: "monster",
+      },
+      "goblin 2": {
+        id: "goblin 2",
+        name: "goblin 2",
+        hp: { current: 31, max: 31 },
+        type: "monster",
+      },
+    },
+  }) as const;
+
+const useInitialState = (): CombatEngineState =>
+  useMemo(() => getInitialState(), []);
 
 // needs api for event ingress/egress
 export const useCombatEngine = (notify: (state: CombatEngineState) => void) => {
@@ -69,11 +66,14 @@ export const useCombatEngine = (notify: (state: CombatEngineState) => void) => {
     const updateFrequencyMs = 50;
     interval.current = window.setInterval(() => {
       updates.current += 1;
-      if (updates.current < 100) {
-        const results = processEvents(pendingEvents);
+      if (updates.current < 150) {
+        const results = processEvents(state, pendingEvents);
+
+        // we're making the assumption here that the presence of events implies a mutated state
         if (results.length > 0) {
           notify(state.current);
         }
+        // just bail to prevent spinning cpu for now
       } else {
         console.log("maximum updates, clearing ...");
         clearInterval(interval.current);
