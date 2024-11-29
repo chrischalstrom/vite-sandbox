@@ -8,13 +8,17 @@ import { CombatCard } from "src/components/CombatCard";
 import { HealthBar } from "src/components/HealthBar";
 
 export const CombatPlayerCard = ({ entityId }: { entityId: string }) => {
-  const name = useCombatEngineState(selectEntityName(entityId, "players"));
+  const name = useCombatEngineState(selectEntityName({ entityId }));
   const { current, max } = useCombatEngineState(
-    selectEntityHealth(entityId, "players"),
+    selectEntityHealth({ entityId }),
   );
 
+  if (!name) {
+    return null;
+  }
+
   return (
-    <div className="flex-1">
+    <div className="flex-1" data-testid="combat-player-card">
       <CombatCard>{name}</CombatCard>
       <HealthBar current={current} max={max} />
     </div>
