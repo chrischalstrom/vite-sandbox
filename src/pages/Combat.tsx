@@ -1,4 +1,5 @@
 import { CombatMonsterCard } from "src/components/CombatMonsterCard";
+import { CombatMonsterPane } from "src/components/CombatMonsterPane";
 import { CombatPlayerCard } from "src/components/CombatPlayerCard";
 import { CombatPlayerPane } from "src/components/CombatPlayerPane";
 import { CombatEngineProvider } from "src/contexts/CombatEngine";
@@ -16,18 +17,20 @@ const CombatInner = () => {
   );
 
   return (
-    <div className="flex flex-col justify-between w-full h-full">
-      <div>
-        {monsters.map(({ id }) => (
-          <CombatMonsterCard key={id} entityId={id} />
-        ))}
+    <>
+      <div className="flex justify-center w-full h-full">
+        <CombatMonsterPane>
+          {monsters.map(({ id }) => (
+            <CombatMonsterCard key={id} entityId={id} />
+          ))}
+        </CombatMonsterPane>
       </div>
       <CombatPlayerPane>
         {players.map(({ id }) => (
           <CombatPlayerCard key={id} entityId={id} />
         ))}
       </CombatPlayerPane>
-    </div>
+    </>
   );
 };
 
